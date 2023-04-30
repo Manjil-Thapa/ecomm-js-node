@@ -1,0 +1,24 @@
+{
+  "name": "ecomm-js-node",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Manjil-Thapa/ecomm-js-node.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Manjil-Thapa/ecomm-js-node/issues"
+  },
+  "homepage": "https://github.com/Manjil-Thapa/ecomm-js-node#readme",
+  "dependencies": {
+    "express": "^4.18.2",
+    "nodemon": "^2.0.22"
+  }
+}
