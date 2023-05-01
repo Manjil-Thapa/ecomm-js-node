@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser'); // outside lib
 const cookieSession = require('cookie-session'); //outside lib
 const authRouter = require('./routes/admin/auth');
+const productsRouter = require('./routes/admin/products');
 
 const app = express();
 // from exp lib
@@ -13,6 +14,7 @@ app.use(
   })
 );
 app.use(authRouter);
+app.use(productsRouter);
 
 app.listen(3000, () => {
   console.log('Listening on port 3000');
