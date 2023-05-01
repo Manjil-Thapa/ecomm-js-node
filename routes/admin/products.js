@@ -29,13 +29,19 @@ router.get('/admin/products/new', (req, res) => {
 
 router.post(
   '/admin/products/new',
-  [requireTitle, requirePrice],
-  upload.single('image'),
-  (req, res) => {
+  upload.single('image'), //parsed and access to img and req.body
+  [requireTitle, requirePrice], // then to require middlewares which will have access to title and price and be able to check for errors correctly
+  async (req, res) => {
     // user submitting info from form
     const errors = validationResult(req);
 
-    console.log(req.file);
+    if (!errors.isEmpty()) {
+      return res.send(productsNewTemplate({ errors }));
+    }
+
+    const image = req.file.buffer.toString('base64');
+    const { title, price } = req.body;
+    await productsRepo.create({ title, price, image });
     res.send('submitted');
   }
 );
