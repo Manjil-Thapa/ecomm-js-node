@@ -1,10 +1,11 @@
 const express = require('express');
-const bodyParser = require('body-parser');
-const cookieSession = require('cookie-session');
+const bodyParser = require('body-parser'); // outside lib
+const cookieSession = require('cookie-session'); //outside lib
 const authRouter = require('./routes/admin/auth');
 
 const app = express();
-
+// from exp lib
+app.use(express.static('public')); // from current working directory, find pub folder and make it available to outside world
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(
   cookieSession({
@@ -16,3 +17,5 @@ app.use(authRouter);
 app.listen(3000, () => {
   console.log('Listening on port 3000');
 });
+
+//exp everytime will look into pub folder -> request -> send it back to user -> continue to other middlewares
