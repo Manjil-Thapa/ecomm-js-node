@@ -10,7 +10,7 @@ module.exports = {
     .trim()
     .toFloat() // remb server will always return str, this 'parsing' to num. // whole num or float
     .isFloat({ min: 1 }) // validation step to make sure its a num. min price of $1
-    .withMessage('Must be a number greated than 1'),
+    .withMessage('Must be a number greater than 1'),
   requireEmail: check('email')
     .trim()
     .normalizeEmail()
