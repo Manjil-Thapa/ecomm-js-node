@@ -2,6 +2,7 @@ const { validationResult } = require('express-validator');
 
 module.exports = {
   handleErrors(templateFunc) {
+    // cutomizable middleware to throw in diff template fn each time
     return (req, res, next) => {
       const errors = validationResult(req);
 
@@ -11,5 +12,11 @@ module.exports = {
 
       next();
     };
+  },
+  requireAuth(req, res, next) {
+    if (!req.session.userId) {
+      return res.redirect('/signin');
+    }
+    next();
   },
 };

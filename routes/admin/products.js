@@ -3,23 +3,24 @@ const express = require('express');
 // const { validationResult } = require('express-validator'); moved to middlewares.js
 const multer = require('multer');
 
-const { handleErrors } = require('./middlewares');
+const { handleErrors, requireAuth } = require('./middlewares');
 const productsRepo = require('../../repositories/products');
 const productsNewTemplate = require('../../views/admin/products/new');
 const productsIndexTemplate = require('../../views/admin/products/index');
+const productsEditTemplate = require('../../views/admin/products/edit');
 const { requireTitle, requirePrice, requireImage } = require('./validators');
 
 const router = express.Router();
 const upload = multer({ storage: multer.memoryStorage() });
 
 // route handlers
-router.get('/admin/products', async (req, res) => {
+router.get('/admin/products', requireAuth, async (req, res) => {
   // look into prods repos - find them and render and send back to user
   const products = await productsRepo.getAll();
   res.send(productsIndexTemplate({ products }));
 });
 // show products
-router.get('/admin/products/new', (req, res) => {
+router.get('/admin/products/new', requireAuth, (req, res) => {
   // retrieve just the form
   res.send(productsNewTemplate({})); // empty obj for possible errors
 });
@@ -35,6 +36,7 @@ router.get('/admin/products/new', (req, res) => {
 
 router.post(
   '/admin/products/new',
+  requireAuth,
   upload.single('image'), //parsed and access to img and req.body
   [requireTitle, requirePrice, requireImage], // then to require middlewares which will have access to title and price and be able to check for errors correctly
   handleErrors(productsNewTemplate),
@@ -48,4 +50,34 @@ router.post(
   }
 );
 
+router.get('/admin/products/:id/edit', requireAuth, async (req, res) => {
+  const product = await productsRepo.getOne(req.params.id);
+  if (!product) {
+    return res.send('Product not found');
+  }
+  res.send(productsEditTemplate({ product }));
+});
+
+// submission of edit form
+router.post(
+  '/admin/products/:id/edit',
+  requireAuth,
+  upload.single('image'),
+  [requireTitle, requirePrice],
+  handleErrors(productsEditTemplate),
+  async (req, res) => {
+    const changes = req.body;
+    // check if image is recieved
+    if (!req.file) {
+      changes.image = req.file.buffer.toString('base64');
+    }
+    try {
+      await productsRepo.update(req.params.id, changes);
+    } catch (err) {
+      return res.send('Product not found');
+    }
+
+    res.redirect('/admin/products');
+  }
+);
 module.exports = router;
