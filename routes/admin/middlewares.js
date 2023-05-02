@@ -1,13 +1,18 @@
 const { validationResult } = require('express-validator');
 
 module.exports = {
-  handleErrors(templateFunc) {
+  handleErrors(templateFunc, dataCallBack) {
     // cutomizable middleware to throw in diff template fn each time
-    return (req, res, next) => {
+    return async (req, res, next) => {
       const errors = validationResult(req);
 
       if (!errors.isEmpty()) {
-        return res.send(templateFunc({ errors }));
+        // call dataCB (optional arg) fn
+        let data = {};
+        if (dataCallBack) {
+          data = await dataCallBack(req);
+        }
+        return res.send(templateFunc({ errors, ...data }));
       }
 
       next();

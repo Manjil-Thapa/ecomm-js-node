@@ -64,11 +64,15 @@ router.post(
   requireAuth,
   upload.single('image'),
   [requireTitle, requirePrice],
-  handleErrors(productsEditTemplate),
+  //fixing handleError for this route. takes in req obj, looks into appropriate prod and return prod inside the obj
+  handleErrors(productsEditTemplate, async req => {
+    const product = await productsRepo.getOne(req.params.id);
+    return { product };
+  }),
   async (req, res) => {
     const changes = req.body;
     // check if image is recieved
-    if (!req.file) {
+    if (req.file) {
       changes.image = req.file.buffer.toString('base64');
     }
     try {
