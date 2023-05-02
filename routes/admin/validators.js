@@ -33,6 +33,8 @@ module.exports = {
     .custom((passwordConfirmation, { req }) => {
       if (passwordConfirmation !== req.body.password) {
         throw new Error('Passwords must match');
+      } else {
+        return true;
       }
     }),
   requireEmailExists: check('email')
@@ -61,4 +63,13 @@ module.exports = {
         throw new Error('Invalid password');
       }
     }),
+  requireImage: check('image').custom((image, { req }) => {
+    const file = req.file;
+    if (!file) {
+      throw new Error('Please upload file');
+    }
+    return (req, res, next) => {
+      next();
+    };
+  }),
 };
